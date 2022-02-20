@@ -3,16 +3,15 @@ package com.example.mockito
 import com.example.mockito.model.SearchResponse
 import com.example.mockito.repository.GitHubApi
 import com.example.mockito.repository.GitHubRepository
-import okhttp3.Request
-import okio.Timeout
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class GitHubRepositoryTest {
 
@@ -28,6 +27,17 @@ class GitHubRepositoryTest {
     }
 
     @Test
+
+    fun searchRepos() {
+        val searchQuery = "some query"
+        val call = mock(Call::class.java) as Call<SearchResponse?>
+        `when`(gitHubApi.searchGithub(searchQuery)).thenReturn(call)
+        repository.searchGithub(
+            searchQuery,
+            mock(GitHubRepository.GitHubRepositoryCallback::class.java)
+        )
+        verify(gitHubApi, times(1)).searchGithub(searchQuery)
+
     fun searchGithub_Test() {
         val searchQuery = "some query"
         val call = Mockito.mock(Call::class.java) as Call<SearchResponse?>
