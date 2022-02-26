@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mockito</string>
+    <string name="app_name">Tests</string>
     <string name="repo_full_name">repo full name</string>
     <string name="search_hint">Enter keyword e.g. android</string>
     <string name="enter_search_word">Enter search word</string>
