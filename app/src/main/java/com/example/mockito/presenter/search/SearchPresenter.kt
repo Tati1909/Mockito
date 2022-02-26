@@ -1,8 +1,8 @@
-package com.example.mockito.presenter
+package com.example.mockito.presenter.search
 
-import com.example.mockito.repository.GitHubRepository
 import com.example.mockito.model.SearchResponse
-import com.example.mockito.view.ViewContract
+import com.example.mockito.repository.GitHubRepository
+import com.example.mockito.view.search.ViewSearchContract
 import retrofit2.Response
 
 /**
@@ -14,9 +14,9 @@ import retrofit2.Response
  */
 
 internal class SearchPresenter internal constructor(
-    private val viewContract: ViewContract,
+    private val viewContract: ViewSearchContract,
     private val repository: GitHubRepository
-) : PresenterContract, GitHubRepository.GitHubRepositoryCallback {
+) : PresenterSearchContract, GitHubRepository.GitHubRepositoryCallback {
 
     override fun searchGitHub(searchQuery: String) {
         viewContract.displayLoading(true)

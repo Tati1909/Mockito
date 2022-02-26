@@ -1,4 +1,4 @@
-package com.example.mockito.view
+package com.example.mockito.view.search
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mockito.R
 import com.example.mockito.model.SearchResult
-import kotlinx.android.synthetic.main.list_item.view.*
+import kotlinx.android.synthetic.main.list_item.view.repositoryName
 
 internal class SearchResultAdapter : RecyclerView.Adapter<SearchResultAdapter.SearchResultViewHolder>() {
 
