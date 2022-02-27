@@ -1,4 +1,4 @@
-package com.example.mockito.view
+package com.example.mockito.view.search
 
 import android.os.Bundle
 import android.view.View
@@ -8,22 +8,23 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mockito.R
 import com.example.mockito.model.SearchResult
-import com.example.mockito.presenter.PresenterContract
-import com.example.mockito.presenter.SearchPresenter
+import com.example.mockito.presenter.search.PresenterSearchContract
+import com.example.mockito.presenter.search.SearchPresenter
 import com.example.mockito.repository.GitHubApi
 import com.example.mockito.repository.GitHubRepository
+import com.example.mockito.view.details.DetailsActivity
 import kotlinx.android.synthetic.main.activity_main.progressBar
 import kotlinx.android.synthetic.main.activity_main.recyclerView
-import kotlinx.android.synthetic.main.activity_main.resultsCountTextView
 import kotlinx.android.synthetic.main.activity_main.searchEditText
+import kotlinx.android.synthetic.main.activity_main.toDetailsActivityButton
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.Locale
 
-class MainActivity : AppCompatActivity(), ViewContract {
+class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     private val adapter = SearchResultAdapter()
-    private val presenter: PresenterContract = SearchPresenter(this, createRepository())
+    private val presenter: PresenterSearchContract = SearchPresenter(this, createRepository())
+    private var totalCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +32,13 @@ class MainActivity : AppCompatActivity(), ViewContract {
         setUI()
     }
 
+    /**
+     * теперь по кнопке TO DETAILS у нас будет открываться экран с количеством найденных репозиториев.
+     */
     private fun setUI() {
+        toDetailsActivityButton.setOnClickListener {
+            startActivity(DetailsActivity.getIntent(this, totalCount))
+        }
         setQueryListener()
         setRecyclerView()
     }
@@ -76,9 +83,8 @@ class MainActivity : AppCompatActivity(), ViewContract {
         searchResults: List<SearchResult>,
         totalCount: Int
     ) {
+        this.totalCount = totalCount
         adapter.updateResults(searchResults)
-        resultsCountTextView.text =
-            String.format(Locale.getDefault(), getString(R.string.results_count), totalCount)
     }
 
     override fun displayError() {
@@ -98,7 +104,6 @@ class MainActivity : AppCompatActivity(), ViewContract {
     }
 
     companion object {
-
         const val BASE_URL = "https://api.github.com"
     }
 }

@@ -1,5 +1,6 @@
 package com.example.mockito.presenter
 
-internal interface PresenterContract {
-    fun searchGitHub(searchQuery: String)
-}
+/**
+ * общий для всех экранов интерфейс контракта presenter
+ */
+internal interface PresenterContract {}

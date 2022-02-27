@@ -30,6 +30,11 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -48,6 +53,15 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin'
         exclude group: 'org.mockito'
     }
+
+    //Robolectric
+    testImplementation 'org.robolectric:robolectric:4.5.1'
+    testImplementation 'androidx.test:core:1.4.0'
+    testImplementation 'androidx.test:runner:1.4.0'
+    testImplementation 'androidx.test.ext:junit:1.1.3'
+    testImplementation 'androidx.test.ext:truth:1.4.0'
+    testImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
