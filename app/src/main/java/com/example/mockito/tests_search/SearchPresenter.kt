@@ -1,8 +1,8 @@
-package com.example.mockito.presenter.search
+package com.example.mockito.tests_search
 
+import android.util.Log
 import com.example.mockito.model.SearchResponse
 import com.example.mockito.repository.GitHubRepository
-import com.example.mockito.view.search.ViewSearchContract
 import retrofit2.Response
 
 /**
@@ -17,6 +17,14 @@ internal class SearchPresenter internal constructor(
     private val viewContract: ViewSearchContract,
     private val repository: GitHubRepository
 ) : PresenterSearchContract, GitHubRepository.GitHubRepositoryCallback {
+
+    /*override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context !is PresenterContract) {
+            throw IllegalStateException("Activity must implement PresenterContract")
+        }
+    }*/
 
     override fun searchGitHub(searchQuery: String) {
         viewContract.displayLoading(true)
@@ -45,5 +53,11 @@ internal class SearchPresenter internal constructor(
     override fun handleGitHubError() {
         viewContract.displayLoading(false)
         viewContract.displayError()
+    }
+
+    override fun onDetach() {
+        Log.d("MainActivity", "onDetach")
+
+        super.onDetach()
     }
 }

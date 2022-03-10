@@ -1,12 +1,10 @@
-package com.example.mockito.view.details
+package com.example.mockito.tests_details
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mockito.R
-import com.example.mockito.presenter.details.DetailsPresenter
-import com.example.mockito.presenter.details.PresenterDetailsContract
 import kotlinx.android.synthetic.main.activity_details.decrementButton
 import kotlinx.android.synthetic.main.activity_details.incrementButton
 import kotlinx.android.synthetic.main.activity_details.totalCountTextView

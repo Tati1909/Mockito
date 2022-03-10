@@ -1,5 +1,6 @@
-package com.example.mockito.view.search
+package com.example.mockito.tests_search
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -8,11 +9,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mockito.R
 import com.example.mockito.model.SearchResult
-import com.example.mockito.presenter.search.PresenterSearchContract
-import com.example.mockito.presenter.search.SearchPresenter
 import com.example.mockito.repository.GitHubApi
 import com.example.mockito.repository.GitHubRepository
-import com.example.mockito.view.details.DetailsActivity
+import com.example.mockito.tests_details.DetailsActivity
 import kotlinx.android.synthetic.main.activity_main.progressBar
 import kotlinx.android.synthetic.main.activity_main.recyclerView
 import kotlinx.android.synthetic.main.activity_main.searchEditText
@@ -22,7 +21,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), ViewSearchContract {
 
-    private val adapter = SearchResultAdapter()
+    private val adapterUsers by lazy {
+        SearchResultAdapter(results = ArrayList())
+    }
     private val presenter: PresenterSearchContract = SearchPresenter(this, createRepository())
     private var totalCount: Int = 0
 
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     /**
      * теперь по кнопке TO DETAILS у нас будет открываться экран с количеством найденных репозиториев.
+     * totalCount - количество найденных репозиториев
      */
     private fun setUI() {
         toDetailsActivityButton.setOnClickListener {
@@ -45,9 +47,12 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     private fun setRecyclerView() {
         recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = adapter
+        recyclerView.adapter = adapterUsers
     }
 
+    /**
+     * кнопку поиска будем кликать на клавиатуре
+     */
     private fun setQueryListener() {
         searchEditText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -79,12 +84,14 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
             .build()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun displaySearchResults(
         searchResults: List<SearchResult>,
         totalCount: Int
     ) {
         this.totalCount = totalCount
-        adapter.updateResults(searchResults)
+        adapterUsers.results = searchResults
+        adapterUsers.notifyDataSetChanged()
     }
 
     override fun displayError() {
@@ -104,6 +111,7 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     }
 
     companion object {
+
         const val BASE_URL = "https://api.github.com"
     }
 }

@@ -1,4 +1,4 @@
-package com.example.mockito.presenter.details
+package com.example.mockito.tests_details
 
 import com.example.mockito.presenter.PresenterContract
 

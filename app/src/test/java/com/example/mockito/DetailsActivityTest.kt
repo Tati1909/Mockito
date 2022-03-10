@@ -9,7 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.mockito.view.details.DetailsActivity
+import com.example.mockito.tests_details.DetailsActivity
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.After
@@ -78,6 +78,9 @@ class DetailsActivityTest {
         }
     }
 
+    /**
+     * Убедимся, что вью видны на экране
+     */
     @Test
     fun activityTextView_IsVisible() {
         scenario.onActivity {

@@ -2,9 +2,10 @@ package com.example.mockito
 
 import com.example.mockito.model.SearchResponse
 import com.example.mockito.model.SearchResult
-import com.example.mockito.presenter.search.SearchPresenter
 import com.example.mockito.repository.GitHubRepository
-import com.example.mockito.view.search.ViewSearchContract
+import com.example.mockito.tests_search.SearchPresenter
+import com.example.mockito.tests_search.ViewSearchContract
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -21,6 +22,7 @@ import retrofit2.Response
 задействуя инстансы других классов.
  */
 class SearchPresenterTest {
+
     private lateinit var presenter: SearchPresenter
 
     @Mock
@@ -29,11 +31,11 @@ class SearchPresenterTest {
     @Mock
     private lateinit var viewContract: ViewSearchContract
 
+    private lateinit var closeable: AutoCloseable
+
     @Before
     fun setUp() {
-//Обязательно для аннотаций "@Mock"
-//Раньше было @RunWith(MockitoJUnitRunner.class) в аннотации к самому классу (SearchPresenterTest)
-        MockitoAnnotations.initMocks(this)
+        closeable = MockitoAnnotations.openMocks(this)
 //Создаем Презентер, используя моки Репозитория и Вью, проинициализированные строкой выше
         presenter = SearchPresenter(viewContract, repository)
     }
@@ -153,5 +155,10 @@ class SearchPresenterTest {
 
         //Убеждаемся, что ответ от сервера обрабатывается корректно
         Mockito.verify(viewContract, Mockito.times(1)).displaySearchResults(searchResults, 101)
+    }
+
+    @After
+    fun closeService() {
+        closeable.close()
     }
 }
