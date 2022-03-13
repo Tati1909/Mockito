@@ -1,6 +1,6 @@
 package com.example.mockito.repository
 
-import com.example.mockito.model.SearchResponse
+import com.example.mockito.tests_search.model.SearchResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

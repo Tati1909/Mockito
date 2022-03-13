@@ -8,18 +8,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mockito.R
-import com.example.mockito.model.SearchResult
+import com.example.mockito.databinding.ActivityMainBinding
 import com.example.mockito.repository.GitHubApi
 import com.example.mockito.repository.GitHubRepository
 import com.example.mockito.tests_details.DetailsActivity
-import kotlinx.android.synthetic.main.activity_main.progressBar
-import kotlinx.android.synthetic.main.activity_main.recyclerView
-import kotlinx.android.synthetic.main.activity_main.searchEditText
-import kotlinx.android.synthetic.main.activity_main.toDetailsActivityButton
+import com.example.mockito.tests_search.model.SearchResult
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), ViewSearchContract {
+
+    private lateinit var binding: ActivityMainBinding
 
     private val adapterUsers by lazy {
         SearchResultAdapter(results = ArrayList())
@@ -29,7 +28,8 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setUI()
     }
 
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
      * totalCount - количество найденных репозиториев
      */
     private fun setUI() {
-        toDetailsActivityButton.setOnClickListener {
+        binding.toDetailsActivityButton.setOnClickListener {
             startActivity(DetailsActivity.getIntent(this, totalCount))
         }
         setQueryListener()
@@ -46,17 +46,17 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     }
 
     private fun setRecyclerView() {
-        recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = adapterUsers
+        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.adapter = adapterUsers
     }
 
     /**
      * кнопку поиска будем кликать на клавиатуре
      */
     private fun setQueryListener() {
-        searchEditText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+        binding.searchEditText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                val query = searchEditText.text.toString()
+                val query = binding.searchEditText.text.toString()
                 if (query.isNotBlank()) {
                     presenter.searchGitHub(query)
                     return@OnEditorActionListener true
@@ -104,9 +104,9 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     override fun displayLoading(show: Boolean) {
         if (show) {
-            progressBar.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.VISIBLE
         } else {
-            progressBar.visibility = View.GONE
+            binding.progressBar.visibility = View.GONE
         }
     }
 

@@ -1,8 +1,8 @@
 package com.example.mockito
 
-import com.example.mockito.model.SearchResponse
 import com.example.mockito.repository.GitHubApi
 import com.example.mockito.repository.GitHubRepository
+import com.example.mockito.tests_search.model.SearchResponse
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

@@ -1,8 +1,8 @@
 package com.example.mockito.tests_search
 
 import android.util.Log
-import com.example.mockito.model.SearchResponse
 import com.example.mockito.repository.GitHubRepository
+import com.example.mockito.tests_search.model.SearchResponse
 import retrofit2.Response
 
 /**

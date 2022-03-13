@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mockito.R
-import com.example.mockito.model.SearchResult
-import kotlinx.android.synthetic.main.list_item.view.repositoryName
+import com.example.mockito.databinding.ListItemBinding
+import com.example.mockito.tests_search.model.SearchResult
 
 class SearchResultAdapter(
     var results: List<SearchResult>
@@ -32,8 +32,10 @@ class SearchResultAdapter(
 
     inner class SearchResultViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        private val binding = ListItemBinding.bind(itemView)
+
         fun bind(searchResult: SearchResult) {
-            itemView.repositoryName.text = searchResult.fullName
+            binding.repositoryName.text = searchResult.fullName
         }
     }
 }
