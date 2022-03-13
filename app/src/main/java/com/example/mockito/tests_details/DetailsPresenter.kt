@@ -1,11 +1,14 @@
-package com.example.mockito.presenter.details
+package com.example.mockito.tests_details
 
-import com.example.mockito.view.details.ViewDetailsContract
+import android.util.Log
+import com.example.mockito.view.ViewContract
 
 internal class DetailsPresenter internal constructor(
     private val viewContract: ViewDetailsContract,
     private var count: Int = 0
 ) : PresenterDetailsContract {
+
+    override fun onAttach(view: ViewContract) {}
 
     override fun setCounter(count: Int) {
         this.count = count
@@ -19,5 +22,11 @@ internal class DetailsPresenter internal constructor(
     override fun onDecrement() {
         count--
         viewContract.setCount(count)
+    }
+
+    override fun onDetach() {
+        Log.d("DetailActivity", "onDetach")
+
+        super.onDetach()
     }
 }

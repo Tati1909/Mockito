@@ -1,4 +1,4 @@
-package com.example.mockito.presenter.search
+package com.example.mockito.tests_search
 
 import com.example.mockito.presenter.PresenterContract
 

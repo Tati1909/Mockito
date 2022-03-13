@@ -1,6 +1,14 @@
 package com.example.mockito.presenter
 
+import com.example.mockito.view.ViewContract
+
 /**
- * общий для всех экранов интерфейс контракта presenter
+ * Общий для всех экранов интерфейс с функциями onAttach() и onDetach()
+ * Помним, что когда тело функции пустое, то можем эту функцию далее не переопределять
  */
-internal interface PresenterContract {}
+internal interface PresenterContract {
+
+    fun onAttach(view: ViewContract) {}
+
+    fun onDetach() {}
+}

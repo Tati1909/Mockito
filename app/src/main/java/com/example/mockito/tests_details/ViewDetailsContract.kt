@@ -1,4 +1,4 @@
-package com.example.mockito.view.details
+package com.example.mockito.tests_details
 
 import com.example.mockito.view.ViewContract
 
