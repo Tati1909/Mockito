@@ -9,8 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mockito.R
 import com.example.mockito.databinding.ActivityMainBinding
-import com.example.mockito.repository.GitHubApi
 import com.example.mockito.repository.GitHubRepository
+import com.example.mockito.repository.GitHubService
 import com.example.mockito.tests_details.DetailsActivity
 import com.example.mockito.tests_search.model.SearchResult
 import retrofit2.Retrofit
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     }
 
     private fun createRepository(): GitHubRepository {
-        return GitHubRepository(createRetrofit().create(GitHubApi::class.java))
+        return GitHubRepository(createRetrofit().create(GitHubService::class.java))
     }
 
     private fun createRetrofit(): Retrofit {
