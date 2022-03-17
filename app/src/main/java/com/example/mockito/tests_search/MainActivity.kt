@@ -7,14 +7,18 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.mockito.BuildConfig
 import com.example.mockito.R
 import com.example.mockito.databinding.ActivityMainBinding
+import com.example.mockito.repository.FakeGitHubRepository
 import com.example.mockito.repository.GitHubRepository
 import com.example.mockito.repository.GitHubService
+import com.example.mockito.repository.RepositoryContract
 import com.example.mockito.tests_details.DetailsActivity
 import com.example.mockito.tests_search.model.SearchResult
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Locale
 
 class MainActivity : AppCompatActivity(), ViewSearchContract {
 
@@ -73,8 +77,15 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         })
     }
 
-    private fun createRepository(): GitHubRepository {
-        return GitHubRepository(createRetrofit().create(GitHubService::class.java))
+    /**
+     * создаем Репозиторий для презентера. Метод createRepository() теперь возвращает интерфейс, а его реализация зависит от сборки.
+     */
+    private fun createRepository(): RepositoryContract {
+        return if (BuildConfig.TYPE == FAKE) {
+            FakeGitHubRepository()
+        } else {
+            GitHubRepository(createRetrofit().create(GitHubService::class.java))
+        }
     }
 
     private fun createRetrofit(): Retrofit {
@@ -89,6 +100,10 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         searchResults: List<SearchResult>,
         totalCount: Int
     ) {
+        with(binding.totalCountTextView) {
+            visibility = View.VISIBLE
+            text = String.format(Locale.getDefault(), getString(R.string.results_count), totalCount)
+        }
         this.totalCount = totalCount
         adapterUsers.results = searchResults
         adapterUsers.notifyDataSetChanged()
@@ -112,6 +127,7 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     companion object {
 
+        const val FAKE = "FAKE"
         const val BASE_URL = "https://api.github.com"
     }
 }

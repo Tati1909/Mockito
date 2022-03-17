@@ -5,11 +5,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class GitHubRepository(private val gitHubService: GitHubService) {
+class GitHubRepository(private val gitHubService: GitHubService) : RepositoryContract {
 
-    fun searchGithub(
+    override fun searchGithub(
         query: String,
-        callback: GitHubRepositoryCallback
+        callback: RepositoryCallback
     ) {
         val call = gitHubService.searchGithub(query)
         call?.enqueue(object : Callback<SearchResponse?> {
@@ -28,10 +28,5 @@ class GitHubRepository(private val gitHubService: GitHubService) {
                 callback.handleGitHubError()
             }
         })
-    }
-
-    interface GitHubRepositoryCallback {
-        fun handleGitHubResponse(response: Response<SearchResponse?>?)
-        fun handleGitHubError()
     }
 }
