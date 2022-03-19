@@ -1,6 +1,6 @@
 package com.example.mockito.tests_search
 
-import com.example.mockito.model.SearchResult
+import com.example.mockito.tests_search.model.SearchResult
 import com.example.mockito.view.ViewContract
 
 internal interface ViewSearchContract : ViewContract {

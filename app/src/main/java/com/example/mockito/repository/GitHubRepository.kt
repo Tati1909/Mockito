@@ -1,17 +1,17 @@
 package com.example.mockito.repository
 
-import com.example.mockito.model.SearchResponse
+import com.example.mockito.tests_search.model.SearchResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-internal class GitHubRepository(private val gitHubApi: GitHubApi) {
+class GitHubRepository(private val gitHubService: GitHubService) : RepositoryContract {
 
-    fun searchGithub(
+    override fun searchGithub(
         query: String,
-        callback: GitHubRepositoryCallback
+        callback: RepositoryCallback
     ) {
-        val call = gitHubApi.searchGithub(query)
+        val call = gitHubService.searchGithub(query)
         call?.enqueue(object : Callback<SearchResponse?> {
 
             override fun onResponse(
@@ -28,10 +28,5 @@ internal class GitHubRepository(private val gitHubApi: GitHubApi) {
                 callback.handleGitHubError()
             }
         })
-    }
-
-    interface GitHubRepositoryCallback {
-        fun handleGitHubResponse(response: Response<SearchResponse?>?)
-        fun handleGitHubError()
     }
 }

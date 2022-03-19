@@ -1,10 +1,10 @@
 package com.example.mockito
 
-import com.example.mockito.model.SearchResponse
-import com.example.mockito.model.SearchResult
 import com.example.mockito.repository.GitHubRepository
 import com.example.mockito.tests_search.SearchPresenter
 import com.example.mockito.tests_search.ViewSearchContract
+import com.example.mockito.tests_search.model.SearchResponse
+import com.example.mockito.tests_search.model.SearchResult
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before

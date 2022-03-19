@@ -1,8 +1,9 @@
 package com.example.mockito.tests_search
 
 import android.util.Log
-import com.example.mockito.model.SearchResponse
-import com.example.mockito.repository.GitHubRepository
+import com.example.mockito.repository.RepositoryCallback
+import com.example.mockito.repository.RepositoryContract
+import com.example.mockito.tests_search.model.SearchResponse
 import retrofit2.Response
 
 /**
@@ -15,8 +16,8 @@ import retrofit2.Response
 
 internal class SearchPresenter internal constructor(
     private val viewContract: ViewSearchContract,
-    private val repository: GitHubRepository
-) : PresenterSearchContract, GitHubRepository.GitHubRepositoryCallback {
+    private val repository: RepositoryContract
+) : PresenterSearchContract, RepositoryCallback {
 
     /*override fun onAttach(context: Context) {
         super.onAttach(context)
