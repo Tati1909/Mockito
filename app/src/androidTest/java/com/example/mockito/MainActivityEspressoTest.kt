@@ -80,14 +80,14 @@ class MainActivityEspressoTest {
         onView(withId(R.id.searchEditText)).perform(pressImeActionButton())
         onView(withId(R.id.searchEditText)).perform(closeSoftKeyboard())
 
-        if (BuildConfig.TYPE == MainActivity.FAKE) {
-            onView(withId(R.id.totalCountTextViewMain))
-                .check(matches(withText("Number of results: 42")))
-        } else {
-            onView(isRoot()).perform(delay())
-            onView(withId(R.id.totalCountTextViewMain))
-                .check(matches(withText("Number of results: 2936")))
-        }
+        /**
+         * BuildConfig.COUNT будет меняться в зависимости от типа сборки:
+         * fakeDebug - COUNT = 42
+         * realDebug - COUNT = 2937(значение меняется)
+         */
+        onView(isRoot()).perform(delay())
+        onView(withId(R.id.totalCountTextViewMain))
+            .check(matches(withText("Number of results: ${BuildConfig.COUNT}")))
     }
 
     /**
