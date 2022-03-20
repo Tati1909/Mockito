@@ -1,6 +1,8 @@
 package com.example.mockito
 
 import android.view.View
+import android.widget.TextView
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.UiController
@@ -10,11 +12,13 @@ import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.mockito.tests_search.MainActivity
+import junit.framework.TestCase
 import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Before
@@ -31,26 +35,59 @@ class MainActivityEspressoTest {
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 
+    @Test
+    fun activity_AssertNotNull() {
+        scenario.onActivity {
+            TestCase.assertNotNull(it)
+        }
+    }
+
+    @Test
+    fun activity_IsResumed() {
+        TestCase.assertEquals(Lifecycle.State.RESUMED, scenario.state)
+    }
+
+    @Test
+    fun activityTextView_NotNull() {
+        scenario.onActivity {
+            val totalCountTextView =
+                it.findViewById<TextView>(R.id.totalCountTextViewMain)
+            TestCase.assertNotNull(totalCountTextView)
+        }
+    }
+
+    /**
+     * Метод isDisplayed() вернет true если хотя бы часть View отображается на экране.
+     */
+    @Test
+    fun activityTextView_IsDisplayed() {
+        onView(withId(R.id.toDetailsActivityButton)).check(matches(ViewMatchers.isDisplayed()))
+    }
+
+    @Test
+    fun activityButtons_AreEffectiveVisible() {
+        onView(withId(R.id.searchEditText)).check(matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+    }
+
     /**
      * проверим, как у нас отрабатывает запрос на сервер:
      */
     @Test
     fun activitySearch_IsWorking() {
         onView(withId(R.id.searchEditText)).perform(click())
-        onView(withId(R.id.searchEditText)).perform(replaceText("algol"), closeSoftKeyboard())
+        onView(withId(R.id.searchEditText)).perform(replaceText("algol"))
+        //нажать главную кнопку клавиатуры (в нашем случае - поиск)
         onView(withId(R.id.searchEditText)).perform(pressImeActionButton())
+        onView(withId(R.id.searchEditText)).perform(closeSoftKeyboard())
 
+        /**
+         * BuildConfig.COUNT будет меняться в зависимости от типа сборки:
+         * fakeDebug - COUNT = 42
+         * realDebug - COUNT = 2937(значение меняется)
+         */
         onView(isRoot()).perform(delay())
-        onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 2928")))
-
-        if (BuildConfig.TYPE == MainActivity.FAKE) {
-            onView(withId(R.id.totalCountTextView))
-                .check(matches(withText("Number of results: 42")))
-        } else {
-            onView(isRoot()).perform(delay())
-            onView(withId(R.id.totalCountTextView))
-                .check(matches(withText("Number of results: 2928")))
-        }
+        onView(withId(R.id.totalCountTextViewMain))
+            .check(matches(withText("Number of results: ${BuildConfig.COUNT}")))
     }
 
     /**
