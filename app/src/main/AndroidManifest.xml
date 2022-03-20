@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.mockito">
+    package="com.example.tests">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mockito">
         <activity
-            android:name="com.example.mockito.tests_search.MainActivity"
+            android:name="com.example.tests.tests_search.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.example.mockito.tests_details.DetailsActivity" />
+        <activity android:name="com.example.tests.tests_details.DetailsActivity" />
 
     </application>
 
