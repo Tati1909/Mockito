@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
      * кнопку поиска будем кликать на клавиатуре
      */
     private fun setQueryListener() {
-        binding.searchEditText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+        binding.searchEditText.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = binding.searchEditText.text.toString()
                 if (query.isNotBlank()) {

@@ -2,8 +2,11 @@ package com.example.tests.automator
 
 import android.content.Context
 import android.content.Intent
+import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -14,11 +17,16 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import com.example.tests.R
+import org.hamcrest.Matcher
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
+/**
+ * На эмуляторе данные грузятся дольше, так что некоторые тесты могут не проходить.
+ * Лучше пользоваться реальной мобилкой.
+ */
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = 23)
 class BehaviorTest {
@@ -65,7 +73,7 @@ class BehaviorTest {
         //Через uiDevice находим editText
         val editText = uiDevice.findObject(By.res(packageName, "searchEditText"))
         //Устанавливаем значение
-        editText.text = "UiAutomator"
+        editText.text = "automator"
         //Отправляем запрос через Espresso
         Espresso.onView(ViewMatchers.withId(R.id.searchEditText))
             .perform(ViewActions.pressImeActionButton())
@@ -79,19 +87,14 @@ class BehaviorTest {
             )
         //Убеждаемся, что сервер вернул корректный результат. Не забываем, что количество
         //результатов может варьироваться во времени, потому что количество репозиториев постоянно меняется.
-        Assert.assertEquals(changedText.text.toString(), "Number of results: 700")
+        Assert.assertEquals(changedText.text.toString(), "Number of results: 5723")
     }
 
     //Убеждаемся, что DetailsScreen открывается
     @Test
     fun test_OpenDetailsScreen() {
         //Находим кнопку
-        val toDetails: UiObject2 = uiDevice.findObject(
-            By.res(
-                packageName,
-                "toDetailsActivityButton"
-            )
-        )
+        val toDetails: UiObject2 = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
         //Кликаем по ней
         toDetails.click()
 
@@ -99,15 +102,125 @@ class BehaviorTest {
         //Это будет означать, что DetailsScreen открылся и это поле видно на экране.
         val changedText =
             uiDevice.wait(
-                Until.findObject(By.res(packageName, "totalCountTextView")),
+                Until.findObject(By.res(packageName, "totalCountTextViewDetails")),
                 TIMEOUT
             )
         //Убеждаемся, что поле видно и содержит предполагаемый текст.
         //Обратите внимание, что текст должен быть "Number of results: 0",
         //так как мы кликаем по кнопке не отправляя никаких поисковых запросов.
-        //Чтобы проверить отображение определенного количества репозиториев,
-        //вам в одном и том же методе нужно отправить запрос на сервер и открыть DetailsScreen.
         Assert.assertEquals(changedText.text, "Number of results: 0")
+    }
+
+    //Убеждаемся, что если нажать на + в DetailsScreen, то в результате будет отображаться 1
+    @Test
+    fun test_CheckIncrementButton() {
+        //Находим кнопку
+        val toDetails: UiObject2 = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
+        //Кликаем по ней
+        toDetails.click()
+
+        //Ожидаем конкретного события: появления текстового поля totalCountTextView.
+        //Это будет означать, что DetailsScreen открылся и это поле видно на экране.
+        val changedText =
+            uiDevice.wait(
+                Until.findObject(By.res(packageName, "totalCountTextViewDetails")),
+                TIMEOUT
+            )
+
+        //Находим кнопку
+        val incrementButton: UiObject2 = uiDevice.findObject(By.res(packageName, "incrementButton"))
+        //Кликаем по ней
+        incrementButton.click()
+        //Убеждаемся, что поле видно и содержит предполагаемый текст.
+        //Обратите внимание, что текст должен быть "Number of results: 0",
+        //так как мы кликаем по кнопке не отправляя никаких поисковых запросов.
+        Assert.assertEquals(changedText.text, "Number of results: 1")
+    }
+
+    //Убеждаемся, что если нажать на - в DetailsScreen, то в результате будет отображаться -1
+    @Test
+    fun test_CheckDecrementButton() {
+        //Находим кнопку
+        val toDetails: UiObject2 = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
+        //Кликаем по ней
+        toDetails.click()
+
+        //Ожидаем конкретного события: появления текстового поля totalCountTextView.
+        //Это будет означать, что DetailsScreen открылся и это поле видно на экране.
+        val changedText =
+            uiDevice.wait(
+                Until.findObject(By.res(packageName, "totalCountTextViewDetails")),
+                TIMEOUT
+            )
+
+        //Находим кнопку
+        val decrementButton: UiObject2 = uiDevice.findObject(By.res(packageName, "decrementButton"))
+        //Кликаем по ней
+        decrementButton.click()
+        //Убеждаемся, что поле видно и содержит предполагаемый текст.
+        Assert.assertEquals(changedText.text, "Number of results: -1")
+    }
+
+    //Убеждаемся, что DetailsScreen открывается и кнопка decrement notNull
+    @Test
+    fun test_OpenDetailsScreenAndVisibilityDecrementButton() {
+        //Находим кнопку
+        val toDetails: UiObject2 = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
+        //Кликаем по ней
+        toDetails.click()
+
+        //Ожидаем конкретного события: появления текстового поля totalCountTextView.
+        //Это будет означать, что DetailsScreen открылся и это поле видно на экране.
+        val buttonDecrement =
+            uiDevice.wait(
+                Until.findObject(By.res(packageName, "decrementButton")),
+                TIMEOUT
+            )
+        Assert.assertNotNull(buttonDecrement)
+    }
+
+    /** Убеждаемся, что когда вводим слово "automator", и переходим на DetailsScreen,
+     * то экран действительно открывается и отображается верный результат в totalCountTextViewDetails
+     */
+    @Test
+    fun test_OpenDetailsScreenAndCheckResult() {
+        //Через uiDevice находим editText
+        val editText = uiDevice.findObject(By.res(packageName, "searchEditText"))
+        //Устанавливаем значение
+        editText.text = "automator"
+        //Отправляем запрос через Espresso
+        Espresso.onView(ViewMatchers.withId(R.id.searchEditText))
+            .perform(ViewActions.pressImeActionButton())
+        //ждем 4 секунды
+        Espresso.onView(ViewMatchers.isRoot()).perform(delay())
+
+        //Находим кнопку toDetails
+        val toDetails: UiObject2 = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
+        //Кликаем по ней
+        toDetails.click()
+        //Ожидаем конкретного события: появления текстового поля totalCountTextView.
+        //Это будет означать, что DetailsScreen открылся и это поле видно на экране.
+        val changedText =
+            uiDevice.wait(
+                Until.findObject(By.res(packageName, "totalCountTextViewDetails")),
+                TIMEOUT
+            )
+        //Убеждаемся, что поле видно и содержит предполагаемый текст.
+        Assert.assertEquals(changedText.text, "Number of results: 5723")
+    }
+
+    /**
+     * Нам нужно как-то поставить на паузу тест и дождаться ответа от сервера. Для этого
+     * мы будем ставить на ожидание View, который мы планируем тестировать. Напишем вспомогательный метод.
+     */
+    private fun delay(): ViewAction {
+        return object : ViewAction {
+            override fun getConstraints(): Matcher<View> = ViewMatchers.isRoot()
+            override fun getDescription(): String = "wait for $4seconds"
+            override fun perform(uiController: UiController, v: View?) {
+                uiController.loopMainThreadForAtLeast(4000)
+            }
+        }
     }
 
     companion object {

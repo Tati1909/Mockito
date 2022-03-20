@@ -2,6 +2,7 @@ package com.example.tests
 
 import com.example.tests.repository.GitHubRepository
 import com.example.tests.repository.GitHubService
+import com.example.tests.repository.RepositoryCallback
 import com.example.tests.tests_search.model.SearchResponse
 import org.junit.Before
 import org.junit.Test
@@ -34,7 +35,7 @@ class GitHubRepositoryTest {
         `when`(gitHubService.searchGithub(searchQuery)).thenReturn(call)
         repository.searchGithub(
             searchQuery,
-            mock(GitHubRepository.GitHubRepositoryCallback::class.java)
+            mock(RepositoryCallback::class.java)
         )
         verify(gitHubService, times(1)).searchGithub(searchQuery)
     }
