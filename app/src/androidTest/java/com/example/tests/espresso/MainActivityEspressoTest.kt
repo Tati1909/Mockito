@@ -1,4 +1,4 @@
-package com.example.tests
+package com.example.tests.espresso
 
 import android.view.View
 import android.widget.TextView
@@ -17,6 +17,8 @@ import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.tests.BuildConfig
+import com.example.tests.R
 import com.example.tests.tests_search.MainActivity
 import junit.framework.TestCase
 import org.hamcrest.Matcher

@@ -1,4 +1,4 @@
-package com.example.tests
+package com.example.tests.espresso
 
 import android.widget.TextView
 import androidx.lifecycle.Lifecycle
@@ -14,6 +14,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.tests.R
 import com.example.tests.tests_details.DetailsActivity
 import junit.framework.TestCase
 import org.junit.After
