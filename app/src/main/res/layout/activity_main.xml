@@ -36,7 +36,7 @@
         app:layout_constraintTop_toBottomOf="@id/searchEditText" />
 
     <TextView
-        android:id="@+id/totalCountTextView"
+        android:id="@+id/totalCountTextViewMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -53,5 +53,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/totalCountTextView" />
+        app:layout_constraintTop_toBottomOf="@id/totalCountTextViewMain" />
 </androidx.constraintlayout.widget.ConstraintLayout>
