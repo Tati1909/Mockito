@@ -17,6 +17,9 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import com.example.tests.R
+import com.example.tests.TEST_NUMBER_OF_RESULTS_MINUS_1
+import com.example.tests.TEST_NUMBER_OF_RESULTS_PLUS_1
+import com.example.tests.TEST_NUMBER_OF_RESULTS_ZERO
 import org.hamcrest.Matcher
 import org.junit.Assert
 import org.junit.Before
@@ -108,7 +111,7 @@ class BehaviorTest {
         //Убеждаемся, что поле видно и содержит предполагаемый текст.
         //Обратите внимание, что текст должен быть "Number of results: 0",
         //так как мы кликаем по кнопке не отправляя никаких поисковых запросов.
-        Assert.assertEquals(changedText.text, "Number of results: 0")
+        Assert.assertEquals(changedText.text, TEST_NUMBER_OF_RESULTS_ZERO)
     }
 
     //Убеждаемся, что если нажать на + в DetailsScreen, то в результате будет отображаться 1
@@ -131,10 +134,7 @@ class BehaviorTest {
         val incrementButton: UiObject2 = uiDevice.findObject(By.res(packageName, "incrementButton"))
         //Кликаем по ней
         incrementButton.click()
-        //Убеждаемся, что поле видно и содержит предполагаемый текст.
-        //Обратите внимание, что текст должен быть "Number of results: 0",
-        //так как мы кликаем по кнопке не отправляя никаких поисковых запросов.
-        Assert.assertEquals(changedText.text, "Number of results: 1")
+        Assert.assertEquals(changedText.text, TEST_NUMBER_OF_RESULTS_PLUS_1)
     }
 
     //Убеждаемся, что если нажать на - в DetailsScreen, то в результате будет отображаться -1
@@ -158,7 +158,7 @@ class BehaviorTest {
         //Кликаем по ней
         decrementButton.click()
         //Убеждаемся, что поле видно и содержит предполагаемый текст.
-        Assert.assertEquals(changedText.text, "Number of results: -1")
+        Assert.assertEquals(changedText.text, TEST_NUMBER_OF_RESULTS_MINUS_1)
     }
 
     //Убеждаемся, что DetailsScreen открывается и кнопка decrement notNull
