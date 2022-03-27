@@ -1,7 +1,10 @@
 package com.example.tests.espresso
 
+import android.view.View
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
@@ -15,6 +18,7 @@ import com.example.tests.BuildConfig
 import com.example.tests.R
 import com.example.tests.tests_search.MainActivity
 import com.example.tests.tests_search.SearchResultAdapter
+import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -96,11 +100,53 @@ class MainActivityRecyclerViewTest {
         }
     }
 
+    /**
+     * метод в для тестирования нажатия на checkBox в списке
+     */
+    @Test
+    fun activitySearch_PerformCustomClick() {
+        if (BuildConfig.TYPE == MainActivity.FAKE) {
+            loadList()
+            onView(withId(R.id.recyclerView))
+                .perform(
+                    RecyclerViewActions
+                        .actionOnItemAtPosition<SearchResultAdapter.SearchResultViewHolder>(
+                            0,
+                            tapOnItemWithId(R.id.checkbox)
+                        )
+                )
+        }
+    }
+
     //вынестим общий код в отдельный метод
     private fun loadList() {
         onView(withId(R.id.searchEditText)).perform(click())
         onView(withId(R.id.searchEditText)).perform(replaceText("algol"), closeSoftKeyboard())
         onView(withId(R.id.searchEditText)).perform(pressImeActionButton())
+    }
+
+    /**
+     * Использовать методы типа hasDescendant для поиска на экране нужных view не очень красиво
+    и довольно неоптимально. Для таких вещей лучше переопределить класс ViewAction, который
+    принимают методы взаимодействия с UI из библиотеки Espresso. Это сильно облегчает работу с
+    ViewHolder’ом списка, позволяя не только получить view по id, но и произвести над ним любые
+    действия.
+    Добавим новый метод, который будет принимать id требуемого view и возвращать нам готовый
+    ViewAction, который умеет нажимать на этот view.
+     */
+    private fun tapOnItemWithId(id: Int) = object : ViewAction {
+        override fun getConstraints(): Matcher<View>? {
+            return null
+        }
+
+        override fun getDescription(): String {
+            return "Нажимаем на view с указанным id"
+        }
+
+        override fun perform(uiController: UiController, view: View) {
+            val v = view.findViewById(id) as View
+            v.performClick()
+        }
     }
 
     @After
