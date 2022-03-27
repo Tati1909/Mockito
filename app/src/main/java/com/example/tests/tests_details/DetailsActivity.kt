@@ -9,11 +9,12 @@ import com.example.tests.databinding.ActivityDetailsBinding
 
 class DetailsActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityDetailsBinding
+    private var _binding: ActivityDetailsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDetailsBinding.inflate(layoutInflater)
+        _binding = ActivityDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         // Переходим на DetailsFragment
         supportFragmentManager.beginTransaction()
