@@ -7,17 +7,11 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.tests.BuildConfig
+import androidx.lifecycle.ViewModelProvider
 import com.example.tests.R
 import com.example.tests.databinding.ActivityMainBinding
-import com.example.tests.repository.FakeGitHubRepository
-import com.example.tests.repository.GitHubRepository
-import com.example.tests.repository.GitHubService
-import com.example.tests.repository.RepositoryContract
 import com.example.tests.tests_details.DetailsActivity
 import com.example.tests.tests_search.model.SearchResult
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Locale
 
 class MainActivity : AppCompatActivity(), ViewSearchContract {
@@ -28,7 +22,9 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     private val adapterUsers by lazy {
         SearchResultAdapter(results = ArrayList())
     }
-    private val presenter: PresenterSearchContract = SearchPresenter(this, createRepository())
+    private val viewModel: SearchViewModel by lazy {
+        ViewModelProvider(this).get(SearchViewModel::class.java)
+    }
     private var totalCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +32,36 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUI()
+        viewModel.subscribeToLiveData().observe(this) { onStateChange(it) }
+    }
+
+    private fun onStateChange(screenState: ScreenState) {
+        when (screenState) {
+            is ScreenState.Working -> {
+                val searchResponse = screenState.searchResponse
+                val totalCount = searchResponse.totalCount
+                binding.progressBar.visibility = View.GONE
+                with(binding.totalCountTextViewMain) {
+                    visibility = View.VISIBLE
+                    text =
+                        String.format(
+                            Locale.getDefault(),
+                            getString(R.string.results_count),
+                            totalCount
+                        )
+                }
+                this.totalCount = totalCount!!
+                adapterUsers.results = searchResponse.searchResults!!
+                adapterUsers.notifyDataSetChanged()
+            }
+            is ScreenState.Loading -> {
+                binding.progressBar.visibility = View.VISIBLE
+            }
+            is ScreenState.Error -> {
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(this, screenState.error.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     /**
@@ -63,7 +89,7 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = binding.searchEditText.text.toString()
                 if (query.isNotBlank()) {
-                    presenter.searchGitHub(query)
+                    viewModel.searchGitHub(query)
                     return@OnEditorActionListener true
                 } else {
                     Toast.makeText(
@@ -76,24 +102,6 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
             }
             false
         })
-    }
-
-    /**
-     * создаем Репозиторий для презентера. Метод createRepository() теперь возвращает интерфейс, а его реализация зависит от сборки.
-     */
-    private fun createRepository(): RepositoryContract {
-        return if (BuildConfig.TYPE == FAKE) {
-            FakeGitHubRepository()
-        } else {
-            GitHubRepository(createRetrofit().create(GitHubService::class.java))
-        }
-    }
-
-    private fun createRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
     }
 
     @SuppressLint("NotifyDataSetChanged")

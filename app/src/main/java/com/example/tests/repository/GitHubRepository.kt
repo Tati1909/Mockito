@@ -1,6 +1,9 @@
 package com.example.tests.repository
 
 import com.example.tests.tests_search.model.SearchResponse
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,5 +31,21 @@ class GitHubRepository(private val gitHubService: GitHubService) : RepositoryCon
                 callback.handleGitHubError()
             }
         })
+    }
+
+    /**
+     * Запрос с пом RxJava
+     */
+    override fun searchGithub(query: String): Observable<SearchResponse> {
+        return gitHubService.searchGithubRx(query)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    /**
+     * Запрос с пом coroutines
+     */
+    override suspend fun searchGithubAsync(query: String): SearchResponse {
+        return gitHubService.searchGithubAsync(query).await()
     }
 }
