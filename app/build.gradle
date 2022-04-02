@@ -116,4 +116,6 @@ dependencies {
 
     //Правило для тестирования LiveData
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    //Тестирование coroutines
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3'
 }

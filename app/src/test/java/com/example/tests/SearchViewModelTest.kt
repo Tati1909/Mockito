@@ -10,6 +10,7 @@ import com.example.tests.tests_search.ScreenState
 import com.example.tests.tests_search.SearchViewModel
 import com.example.tests.tests_search.model.SearchResponse
 import io.reactivex.Observable
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -17,13 +18,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])
+@ExperimentalCoroutinesApi
 class SearchViewModelTest {
 
     /**
@@ -31,6 +32,12 @@ class SearchViewModelTest {
      */
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
+
+    /**
+     * InstantTaskExecutorRule нужен для тестирования Coroutines
+     */
+    @get:Rule
+    var testCoroutineRule = TestCoroutineRule()
 
     private lateinit var searchViewModel: SearchViewModel
 
@@ -43,51 +50,39 @@ class SearchViewModelTest {
         searchViewModel = SearchViewModel(repository, ScheduleProviderStub())
     }
 
-    @Test //Проверим вызов метода searchGitHub() у нашей ВьюМодели
-    fun search_Test() {
-        Mockito.`when`(repository.searchGithub(SEARCH_QUERY)).thenReturn(
-            Observable.just(
-                SearchResponse(
-                    1,
-                    listOf()
-                )
-            )
-        )
-
-        searchViewModel.searchGitHub(SEARCH_QUERY)
-        verify(repository, times(1)).searchGithub(SEARCH_QUERY)
-    }
-
     /**
      * Убедимся, что LiveData действительно вызывается и возвращает какой-то объект.
      */
     @Test
     fun liveData_TestReturnValueIsNotNull() {
-        //Создаем обсервер. В лямбде мы не вызываем никакие методы - в этом нет необходимости
-        //так как мы проверяем работу LiveData и не собираемся ничего делать с данными, которые она возвращает
-        val observer = Observer<ScreenState> {}
-        //Получаем LiveData
-        val liveData = searchViewModel.subscribeToLiveData()
+        //тестовый код выполняется в рамках Правила, которое умеет работать с suspend-функциями:
+        testCoroutineRule.runBlockingTest {
+            //Создаем обсервер. В лямбде мы не вызываем никакие методы - в этом нет необходимости
+            //так как мы проверяем работу LiveData и не собираемся ничего делать с данными, которые она возвращает
+            val observer = Observer<ScreenState> {}
+            //Получаем LiveData
+            val liveData = searchViewModel.subscribeToLiveData()
 
-        //При вызове Репозитория возвращаем шаблонные данные
-        Mockito.`when`(repository.searchGithub(SEARCH_QUERY)).thenReturn(
-            Observable.just(
-                SearchResponse(
-                    1,
-                    listOf()
+            //При вызове Репозитория возвращаем шаблонные данные
+            Mockito.`when`(repository.searchGithub(SEARCH_QUERY)).thenReturn(
+                Observable.just(
+                    SearchResponse(
+                        1,
+                        listOf()
+                    )
                 )
             )
-        )
 
-        try {
-            //Подписываемся на LiveData без учета жизненного цикла
-            liveData.observeForever(observer)
-            searchViewModel.searchGitHub(SEARCH_QUERY)
-            //Убеждаемся, что Репозиторий вернул данные и LiveData передала их Наблюдателям
-            Assert.assertNotNull(liveData.value)
-        } finally {
-            //Тест закончен, снимаем Наблюдателя
-            liveData.removeObserver(observer)
+            try {
+                //Подписываемся на LiveData без учета жизненного цикла
+                liveData.observeForever(observer)
+                searchViewModel.searchGitHub(SEARCH_QUERY)
+                //Убеждаемся, что Репозиторий вернул данные и LiveData передала их Наблюдателям
+                Assert.assertNotNull(liveData.value)
+            } finally {
+                //Тест закончен, снимаем Наблюдателя
+                liveData.removeObserver(observer)
+            }
         }
     }
 
@@ -95,34 +90,54 @@ class SearchViewModelTest {
      * Проверим, что за объекты она может возвращать и насколько они соответствуют нашим ожиданиям.
      */
     @Test
-    fun liveData_TestReturnValueIsError() {
-        val observer = Observer<ScreenState> {}
-        val liveData = searchViewModel.subscribeToLiveData()
-        val error = Throwable(ERROR_TEXT)
+    fun coroutines_TestReturnValueIsError() {
+        testCoroutineRule.runBlockingTest {
+            val observer = Observer<ScreenState> {}
+            val liveData = searchViewModel.subscribeToLiveData()
 
-        //При вызове Репозитория возвращаем ошибку
-        Mockito.`when`(repository.searchGithub(SEARCH_QUERY)).thenReturn(
-            Observable.error(error)
-        )
+            `when`(repository.searchGithubAsync(SEARCH_QUERY)).thenReturn(
+                SearchResponse(null, listOf())
+            )
+            try {
+                liveData.observeForever(observer)
+                searchViewModel.searchGitHub(SEARCH_QUERY)
 
-        try {
-            liveData.observeForever(observer)
-            searchViewModel.searchGitHub(SEARCH_QUERY)
-            //Убеждаемся, что Репозиторий вернул ошибку и LiveData возвращает ошибку
-            val value: ScreenState.Error = liveData.value as ScreenState.Error
-            Assert.assertEquals(value.error.message, error.message)
-        } finally {
-            liveData.removeObserver(observer)
-            /**
-             * Не забывайте отписываться от LiveData в конце теста, чтобы избежать утечек памяти. Ведь
-            observeForever слушает события бесконечно.
-             */
+                val value: ScreenState.Error = liveData.value as ScreenState.Error
+                Assert.assertEquals(value.error.message, ERROR_TEXT)
+            } finally {
+                liveData.removeObserver(observer)
+            }
+        }
+    }
+
+    /**
+     * проверим, как у нас обрабатываются выбрасываемые исключения, без вызова методов Репозитория. То есть метод
+    SearchViewModel.searchGitHub(query) вызовется, а метод repository.searchGithubAsync(query) — нет.
+    Это приведет к некорректной работе Корутин и наш CoroutineExceptionHandler выбросит исключение,
+    вызвав метод handleError(throwable) и, соответственно, _liveData.value = ScreenState.Error(...):
+     */
+    @Test
+    fun coroutines_TestException() {
+        testCoroutineRule.runBlockingTest {
+            val observer = Observer<ScreenState> {}
+            val liveData = searchViewModel.subscribeToLiveData()
+
+            try {
+                liveData.observeForever(observer)
+                searchViewModel.searchGitHub(SEARCH_QUERY)
+
+                val value: ScreenState.Error = liveData.value as ScreenState.Error
+                Assert.assertEquals(value.error.message, EXCEPTION_TEXT)
+            } finally {
+                liveData.removeObserver(observer)
+            }
         }
     }
 
     companion object {
 
         private const val SEARCH_QUERY = "some query"
-        private const val ERROR_TEXT = "error"
+        private const val ERROR_TEXT = "Search results or total count are null"
+        private const val EXCEPTION_TEXT = "Response is null or unsuccessful"
     }
 }
