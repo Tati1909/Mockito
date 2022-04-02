@@ -2,6 +2,7 @@ package com.example.tests.repository
 
 import com.example.tests.tests_search.model.SearchResponse
 import com.example.tests.tests_search.model.SearchResult
+import io.reactivex.Observable
 import retrofit2.Response
 import kotlin.random.Random
 
@@ -15,14 +16,21 @@ class FakeGitHubRepository : RepositoryContract {
         query: String,
         callback: RepositoryCallback
     ) {
-        callback.handleGitHubResponse(Response.success(getFakeResponse()))
+        callback.handleGitHubResponse(Response.success(generateSearchResponse()))
+    }
+
+    /**
+     * вынесем общий функционал в отдельный метод и добавим работу с rx:
+     */
+    override fun searchGithub(query: String): Observable<SearchResponse> {
+        return Observable.just(generateSearchResponse())
     }
 
     /**
      * будем генерировать данные для нашего списка, чтобы было что проверять,
      * ведь сейчас Репозиторий возвращает пустой список
      */
-    private fun getFakeResponse(): SearchResponse {
+    private fun generateSearchResponse(): SearchResponse {
         val list: MutableList<SearchResult> = mutableListOf()
         for (index in 1..100) {
             list.add(

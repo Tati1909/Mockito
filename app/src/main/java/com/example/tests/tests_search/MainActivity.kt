@@ -17,6 +17,7 @@ import com.example.tests.repository.RepositoryContract
 import com.example.tests.tests_details.DetailsActivity
 import com.example.tests.tests_search.model.SearchResult
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Locale
 
@@ -89,9 +90,14 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         }
     }
 
+    /**
+     * Ретрофит нужно создавать в отдельном классе и инжектить в Презентер. В нашем проекте код упрощен,
+     * чтобы сконцентрироваться на главной теме — тестировании.
+     */
     private fun createRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
