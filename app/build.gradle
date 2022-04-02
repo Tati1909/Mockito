@@ -110,4 +110,7 @@ dependencies {
     //UI Automator
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
     androidTestImplementation 'androidx.test:rules:1.4.1-alpha05'
+
+    //Правило для тестирования LiveData
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
 }

@@ -1,4 +1,4 @@
-package com.example.tests.stubs
+package com.example.tests.presenter
 
 import com.example.tests.provider.SchedulerProvider
 import io.reactivex.Scheduler
