@@ -33,9 +33,19 @@ class GitHubRepository(private val gitHubService: GitHubService) : RepositoryCon
         })
     }
 
+    /**
+     * Запрос с пом RxJava
+     */
     override fun searchGithub(query: String): Observable<SearchResponse> {
         return gitHubService.searchGithubRx(query)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    /**
+     * Запрос с пом coroutines
+     */
+    override suspend fun searchGithubAsync(query: String): SearchResponse {
+        return gitHubService.searchGithubAsync(query).await()
     }
 }

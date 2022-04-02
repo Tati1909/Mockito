@@ -11,4 +11,9 @@ interface RepositoryContract {
      * метод для запроса через rx, который будет возвращать Observable.
      */
     fun searchGithub(query: String): Observable<SearchResponse>
+
+    /**
+     * метод для запроса через coroutines.
+     */
+    suspend fun searchGithubAsync(query: String): SearchResponse
 }

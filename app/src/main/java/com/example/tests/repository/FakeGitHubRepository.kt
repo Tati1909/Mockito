@@ -20,10 +20,17 @@ class FakeGitHubRepository : RepositoryContract {
     }
 
     /**
-     * вынесем общий функционал в отдельный метод и добавим работу с rx:
+     * метод для запроса через rxJava.
      */
     override fun searchGithub(query: String): Observable<SearchResponse> {
         return Observable.just(generateSearchResponse())
+    }
+
+    /**
+     * метод для запроса через coroutines.
+     */
+    override suspend fun searchGithubAsync(query: String): SearchResponse {
+        return generateSearchResponse()
     }
 
     /**
