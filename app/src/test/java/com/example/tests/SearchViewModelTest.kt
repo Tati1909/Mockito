@@ -9,7 +9,6 @@ import com.example.tests.repository.FakeGitHubRepository
 import com.example.tests.tests_search.ScreenState
 import com.example.tests.tests_search.SearchViewModel
 import com.example.tests.tests_search.model.SearchResponse
-import io.reactivex.Observable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert
 import org.junit.Before
@@ -17,7 +16,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.annotation.Config
@@ -62,16 +60,6 @@ class SearchViewModelTest {
             val observer = Observer<ScreenState> {}
             //Получаем LiveData
             val liveData = searchViewModel.subscribeToLiveData()
-
-            //При вызове Репозитория возвращаем шаблонные данные
-            Mockito.`when`(repository.searchGithub(SEARCH_QUERY)).thenReturn(
-                Observable.just(
-                    SearchResponse(
-                        1,
-                        listOf()
-                    )
-                )
-            )
 
             try {
                 //Подписываемся на LiveData без учета жизненного цикла

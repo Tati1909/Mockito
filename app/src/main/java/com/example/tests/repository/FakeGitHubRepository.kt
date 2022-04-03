@@ -2,8 +2,6 @@ package com.example.tests.repository
 
 import com.example.tests.tests_search.model.SearchResponse
 import com.example.tests.tests_search.model.SearchResult
-import io.reactivex.Observable
-import retrofit2.Response
 import kotlin.random.Random
 
 /**
@@ -11,21 +9,6 @@ import kotlin.random.Random
 возвращает тестовые данные:
  */
 class FakeGitHubRepository : RepositoryContract {
-
-    override fun searchGithub(
-        query: String,
-        callback: RepositoryCallback
-    ) {
-        callback.handleGitHubResponse(Response.success(generateSearchResponse()))
-    }
-
-    /**
-     * метод для запроса через rxJava.
-     */
-    override fun searchGithub(query: String): Observable<SearchResponse> {
-        return Observable.just(generateSearchResponse())
-    }
-
     /**
      * метод для запроса через coroutines.
      */

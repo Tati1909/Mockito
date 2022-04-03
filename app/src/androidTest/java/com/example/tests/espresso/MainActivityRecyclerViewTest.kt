@@ -100,24 +100,6 @@ class MainActivityRecyclerViewTest {
         }
     }
 
-    /**
-     * метод в для тестирования нажатия на checkBox в списке
-     */
-    @Test
-    fun activitySearch_PerformCustomClick() {
-        if (BuildConfig.TYPE == MainActivity.FAKE) {
-            loadList()
-            onView(withId(R.id.recyclerView))
-                .perform(
-                    RecyclerViewActions
-                        .actionOnItemAtPosition<SearchResultAdapter.SearchResultViewHolder>(
-                            0,
-                            tapOnItemWithId(R.id.checkbox)
-                        )
-                )
-        }
-    }
-
     //вынестим общий код в отдельный метод
     private fun loadList() {
         onView(withId(R.id.searchEditText)).perform(click())
