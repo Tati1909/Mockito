@@ -1,4 +1,4 @@
-package com.example.tests.tests_search.model
+package com.example.tests.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

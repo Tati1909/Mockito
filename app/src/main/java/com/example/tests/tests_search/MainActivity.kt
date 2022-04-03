@@ -33,6 +33,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.subscribeToLiveData().observe(this) { onStateChange(it) }
     }
 
+    /**
+     * Обрабатываем состояния приложения
+     */
     private fun onStateChange(screenState: ScreenState) {
         when (screenState) {
             is ScreenState.Working -> {

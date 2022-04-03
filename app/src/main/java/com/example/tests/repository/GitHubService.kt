@@ -1,6 +1,6 @@
 package com.example.tests.repository
 
-import com.example.tests.tests_search.model.SearchResponse
+import com.example.tests.model.SearchResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Headers

@@ -1,6 +1,6 @@
 package com.example.tests.repository
 
-import com.example.tests.tests_search.model.SearchResponse
+import com.example.tests.model.SearchResponse
 
 class GitHubRepository(private val gitHubService: GitHubService) : RepositoryContract {
 

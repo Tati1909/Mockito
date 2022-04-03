@@ -1,7 +1,7 @@
 package com.example.tests.repository
 
-import com.example.tests.tests_search.model.SearchResponse
-import com.example.tests.tests_search.model.SearchResult
+import com.example.tests.model.SearchResponse
+import com.example.tests.model.SearchResult
 import kotlin.random.Random
 
 /**
