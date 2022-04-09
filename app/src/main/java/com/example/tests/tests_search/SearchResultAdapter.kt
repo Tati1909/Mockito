@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tests.R
 import com.example.tests.databinding.ListItemBinding
-import com.example.tests.tests_search.model.SearchResult
+import com.example.tests.model.SearchResult
 
 class SearchResultAdapter(
     var results: List<SearchResult>

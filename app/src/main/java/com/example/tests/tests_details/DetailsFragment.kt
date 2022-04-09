@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.tests.R
 import com.example.tests.databinding.FragmentDetailsBinding
 import java.util.Locale
@@ -13,13 +14,19 @@ import java.util.Locale
 /**
  * На этом экране мы будем отображать количество найденных аккаунтов по запросу.
  */
-class DetailsFragment : Fragment(R.layout.fragment_details), ViewDetailsContract {
+class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
 
-    private val presenter: PresenterDetailsContract = DetailsPresenter(this)
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    var count: Int? = null
+
+    private val viewModel: DetailsViewModel by lazy {
+        ViewModelProvider(this).get(DetailsViewModel::class.java)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
@@ -33,14 +40,20 @@ class DetailsFragment : Fragment(R.layout.fragment_details), ViewDetailsContract
     private fun setUI() {
         arguments?.let {
             val counter = it.getInt(TOTAL_COUNT_EXTRA, 0)
-            presenter.setCounter(counter)
+            viewModel.setCounter(counter)
             setCountText(counter)
         }
-        binding.decrementButton.setOnClickListener { presenter.onDecrement() }
-        binding.incrementButton.setOnClickListener { presenter.onIncrement() }
+        binding.decrementButton.setOnClickListener {
+            count = viewModel.onDecrement()
+            setCountText(count!!)
+        }
+        binding.incrementButton.setOnClickListener {
+            count = viewModel.onIncrement()
+            setCountText(count!!)
+        }
     }
 
-    override fun setCount(count: Int) {
+    fun setCount(count: Int) {
         setCountText(count)
     }
 

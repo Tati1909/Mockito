@@ -1,6 +1,5 @@
 package com.example.tests.tests_search
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -11,10 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.tests.R
 import com.example.tests.databinding.ActivityMainBinding
 import com.example.tests.tests_details.DetailsActivity
-import com.example.tests.tests_search.model.SearchResult
 import java.util.Locale
 
-class MainActivity : AppCompatActivity(), ViewSearchContract {
+class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -35,6 +33,9 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         viewModel.subscribeToLiveData().observe(this) { onStateChange(it) }
     }
 
+    /**
+     * Обрабатываем состояния приложения
+     */
     private fun onStateChange(screenState: ScreenState) {
         when (screenState) {
             is ScreenState.Working -> {
@@ -102,36 +103,6 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
             }
             false
         })
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    override fun displaySearchResults(
-        searchResults: List<SearchResult>,
-        totalCount: Int
-    ) {
-        with(binding.totalCountTextViewMain) {
-            visibility = View.VISIBLE
-            text = String.format(Locale.getDefault(), getString(R.string.results_count), totalCount)
-        }
-        this.totalCount = totalCount
-        adapterUsers.results = searchResults
-        adapterUsers.notifyDataSetChanged()
-    }
-
-    override fun displayError() {
-        Toast.makeText(this, getString(R.string.undefined_error), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun displayError(error: String) {
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun displayLoading(show: Boolean) {
-        if (show) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.GONE
-        }
     }
 
     companion object {

@@ -1,19 +1,8 @@
 package com.example.tests.repository
 
-import com.example.tests.tests_search.model.SearchResponse
-import io.reactivex.Observable
+import com.example.tests.model.SearchResponse
 
 interface RepositoryContract {
 
-    fun searchGithub(query: String, callback: RepositoryCallback)
-
-    /**
-     * метод для запроса через rx, который будет возвращать Observable.
-     */
-    fun searchGithub(query: String): Observable<SearchResponse>
-
-    /**
-     * метод для запроса через coroutines.
-     */
     suspend fun searchGithubAsync(query: String): SearchResponse
 }

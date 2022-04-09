@@ -4,12 +4,11 @@ import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.tests.presenter.ScheduleProviderStub
+import com.example.tests.model.SearchResponse
 import com.example.tests.repository.FakeGitHubRepository
+import com.example.tests.repository.GitHubService
 import com.example.tests.tests_search.ScreenState
 import com.example.tests.tests_search.SearchViewModel
-import com.example.tests.tests_search.model.SearchResponse
-import io.reactivex.Observable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert
 import org.junit.Before
@@ -17,7 +16,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.annotation.Config
@@ -44,14 +42,26 @@ class SearchViewModelTest {
     @Mock
     private lateinit var repository: FakeGitHubRepository
 
+    @Mock
+    private lateinit var gitHubService: GitHubService
+
     @Before
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
-        searchViewModel = SearchViewModel(repository, ScheduleProviderStub())
+        MockitoAnnotations.openMocks(this)
+        searchViewModel = SearchViewModel(repository)
     }
 
     /**
      * Убедимся, что LiveData действительно вызывается и возвращает какой-то объект.
+     * Чтобы получать уведомления от LiveData и проверять значения, которые она возвращает, нам
+    нужно на нее подписаться. И обычно мы делаем это во Фрагменте или Активити, передавая в
+    LiveData LifecycleOwner. Это позволяет LiveData не испускать сообщения, пока View находится в
+    процессе пересоздания или в onStop. Но у нас не Инструментальные тесты, мы используем Unit-тесты
+    и не можем знать ни о каких платформенных вещах, тем более про Активити и Фрагменты. И
+    LifecycleOwner нам получить негде.
+    Но решение есть, и оно всегда было — метод LiveData.observeForever(). Как следует из названия, этот метод позволяет
+    подписаться на уведомления и не отписываться от них никогда. В этом случае нам, естественно, не нужно знать ни
+    про какие жизненные циклы:
      */
     @Test
     fun liveData_TestReturnValueIsNotNull() {
@@ -62,16 +72,6 @@ class SearchViewModelTest {
             val observer = Observer<ScreenState> {}
             //Получаем LiveData
             val liveData = searchViewModel.subscribeToLiveData()
-
-            //При вызове Репозитория возвращаем шаблонные данные
-            Mockito.`when`(repository.searchGithub(SEARCH_QUERY)).thenReturn(
-                Observable.just(
-                    SearchResponse(
-                        1,
-                        listOf()
-                    )
-                )
-            )
 
             try {
                 //Подписываемся на LiveData без учета жизненного цикла

@@ -3,13 +3,11 @@ package com.example.tests.tests_search
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.tests.provider.SchedulerProvider
-import com.example.tests.provider.SearchSchedulerProvider
+import com.example.tests.model.SearchResponse
 import com.example.tests.repository.GitHubRepository
 import com.example.tests.repository.GitHubService
 import com.example.tests.repository.RepositoryContract
 import com.example.tests.tests_search.MainActivity.Companion.BASE_URL
-import com.example.tests.tests_search.model.SearchResponse
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -30,8 +28,7 @@ class SearchViewModel(
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(GitHubService::class.java)
-    ),
-    private val appSchedulerProvider: SchedulerProvider = SearchSchedulerProvider()
+    )
 ) : ViewModel() {
 
     private val _liveData = MutableLiveData<ScreenState>()
